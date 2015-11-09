@@ -8,11 +8,19 @@ class FilterStore extends EventEmitter {
     this.filters = [];
   }
   fetchAll() {
-    this.emit('fetched');
+    chrome.storage.sync.get('filters', (items)=> {
+      this.filters = items.filters || [];
+      this.emit('fetched');
+    });
   }
   add(url) {
-    this.filters.push(url);
-    this.emit('added');
+    chrome.storage.sync.get('filters', (items)=> {
+      this.filters = items.filters || [];
+      this.filters.push(url);
+      chrome.storage.sync.set({filters: this.filters}, ()=> {
+        this.emit('added');
+      });
+    });
   }
   get() {
     return this.filters;
