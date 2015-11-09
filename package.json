@@ -1,0 +1,28 @@
+{
+  "name": "req-hook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "background.js",
+  "dependencies": {
+    "babel": "^6.0.15",
+    "babel-preset-react": "^6.1.2",
+    "babelify": "^6.2.0",
+    "react": "^0.14.2",
+    "react-dom": "^0.14.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify main.js -t babelify -o bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://nel215@github.com/nel215/req-hook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nel215/req-hook/issues"
+  },
+  "homepage": "https://github.com/nel215/req-hook#readme"
+}

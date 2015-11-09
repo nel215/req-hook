@@ -1,2 +1,4 @@
 *.swp
 urls.js
+node_modules/*
+bundle.js
