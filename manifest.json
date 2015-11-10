@@ -7,7 +7,6 @@
   },
   "background": {
     "scripts": [
-      "urls.js",
       "background.js"
     ]
   },
