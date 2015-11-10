@@ -14,7 +14,8 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify main.js -t babelify -o bundle.js"
+    "build-popup": "mkdir -p dist && browserify popup.js -t babelify -o dist/popup.js",
+    "build-background": "mkdir -p dist && browserify background.js -t babelify -o dist/background.js"
   },
   "repository": {
     "type": "git",
