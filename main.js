@@ -22,6 +22,15 @@ class FilterStore extends EventEmitter {
       });
     });
   }
+  delete(idx) {
+    chrome.storage.sync.get('filters', (items)=> {
+      this.filters = items.filters || [];
+      this.filters.splice(idx, 1);
+      chrome.storage.sync.set({filters: this.filters}, ()=> {
+        this.emit('deleted');
+      });
+    });
+  }
   get() {
     return this.filters;
   }
@@ -45,18 +54,28 @@ var Filter = React.createClass({
   addUrl: function() {
     filterStore.add(this.state.url);
   },
+  deleteUrl: function(idx) {
+    filterStore.delete(idx);
+  },
   componentDidMount: function() {
     filterStore.on('fetched', this.updateFilter);
     filterStore.on('added', this.updateFilter);
+    filterStore.on('deleted', this.updateFilter);
     filterStore.fetchAll();
   },
   componentWillUnmount: function() {
     filterStore.off('fetched', this.updateFilter);
     filterStore.on('added', this.updateFilter);
+    filterStore.off('deleted', this.updateFilter);
   },
   render: function() {
-    var urls = this.state.filters.map((url)=> {
-      return <p>{url}</p>
+    var urls = this.state.filters.map((url, idx)=> {
+      return (
+        <div key={idx}>
+          {url}
+          <button onClick={this.deleteUrl.bind(this, idx)}>x</button>
+        </div>
+      );
     });
     return (
       <div style={{height: '160px', width: '320px'}}>
