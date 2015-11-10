@@ -65,7 +65,7 @@ var Filter = React.createClass({
   },
   componentWillUnmount: function() {
     filterStore.off('fetched', this.updateFilter);
-    filterStore.on('added', this.updateFilter);
+    filterStore.off('added', this.updateFilter);
     filterStore.off('deleted', this.updateFilter);
   },
   render: function() {
