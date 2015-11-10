@@ -2,10 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {EventEmitter2 as EventEmitter} from 'eventemitter2';
 
-class FilterStore extends EventEmitter {
+class Store extends EventEmitter {
   constructor() {
     super();
     this.filters = [];
+    this.target = '';
+  }
+  fetchTarget() {
+    chrome.storage.sync.get('target', (items)=> {
+      this.target = items.target || '';
+      this.emit('target:fetched');
+    });
+  }
+  changeTarget(target) {
+    this.target = target;
+    chrome.storage.sync.set({target: target}, ()=> {
+      this.emit('target:changed');
+    });
   }
   fetchAll() {
     chrome.storage.sync.get('filters', (items)=> {
@@ -31,12 +44,15 @@ class FilterStore extends EventEmitter {
       });
     });
   }
+  getTarget(){
+    return this.target;
+  }
   get() {
     return this.filters;
   }
 };
 
-var filterStore = new FilterStore();
+var store = new Store();
 
 var Filter = React.createClass({
   getInitialState: function() {
@@ -47,30 +63,38 @@ var Filter = React.createClass({
     };
   },
   targetChanged: function(e) {
-    this.setState({target: e.target.value});
+    store.changeTarget(e.target.value);
   },
   urlChanged: function(e) {
     this.setState({url: e.target.value});
   },
   updateFilter: function() {
-    this.setState({filters: filterStore.get()});
+    this.setState({filters: store.get()});
+  },
+  updateTarget: function() {
+    this.setState({target: store.getTarget()});
   },
   addUrl: function() {
-    filterStore.add(this.state.url);
+    store.add(this.state.url);
   },
   deleteUrl: function(idx) {
-    filterStore.delete(idx);
+    store.delete(idx);
   },
   componentDidMount: function() {
-    filterStore.on('fetched', this.updateFilter);
-    filterStore.on('added', this.updateFilter);
-    filterStore.on('deleted', this.updateFilter);
-    filterStore.fetchAll();
+    store.on('fetched', this.updateFilter);
+    store.on('added', this.updateFilter);
+    store.on('deleted', this.updateFilter);
+    store.on('target:fetched', this.updateTarget);
+    store.on('target:changed', this.updateTarget);
+    store.fetchAll();
+    store.fetchTarget();
   },
   componentWillUnmount: function() {
-    filterStore.off('fetched', this.updateFilter);
-    filterStore.off('added', this.updateFilter);
-    filterStore.off('deleted', this.updateFilter);
+    store.off('fetched', this.updateFilter);
+    store.off('added', this.updateFilter);
+    store.off('deleted', this.updateFilter);
+    store.off('target:fetched', this.updateTarget);
+    store.off('target:changed', this.updateTarget);
   },
   render: function() {
     var urls = this.state.filters.map((url, idx)=> {
