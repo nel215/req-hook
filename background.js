@@ -1,10 +1,18 @@
+import request from 'superagent';
+
 var callback = function(req){
   chrome.storage.sync.get(['filters', 'target'], (items)=> {
     var filters = items.filters || [];
+    var target = items.target || 'http://localhost/';
     for(var i=0; i<filters.length; i++) {
-      console.log(filters[i]);
       if(req.url.indexOf(filters[i]) >= 0) {
-        console.log(req);
+        return request
+          .post(target)
+          .send(req)
+          .end((err, res)=> {
+            console.log(err);
+            console.log(res);
+          });
       }
     }
   });
