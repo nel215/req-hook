@@ -41,9 +41,13 @@ var filterStore = new FilterStore();
 var Filter = React.createClass({
   getInitialState: function() {
     return {
+      targetChanged: '',
       url: '',
       filters: ['http://*/*']
     };
+  },
+  targetChanged: function(e) {
+    this.setState({target: e.target.value});
   },
   urlChanged: function(e) {
     this.setState({url: e.target.value});
@@ -80,10 +84,17 @@ var Filter = React.createClass({
     return (
       <div style={{height: '160px', width: '320px'}}>
         <div>
-          <input type='text' value={this.state.url} onChange={this.urlChanged}></input>
-          <button onClick={this.addUrl}>add</button>
+          <h1>keywords</h1>
+          <div>
+            <input type='text' value={this.state.url} onChange={this.urlChanged}></input>
+            <button onClick={this.addUrl}>add</button>
+          </div>
+          {urls}
         </div>
-        {urls}
+        <div>
+          <h1>hook target</h1>
+          <input type='text' value={this.state.target} onChange={this.targetChanged}></input>
+        </div>
       </div>
     );
   }
